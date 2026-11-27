@@ -4,29 +4,35 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>올해의 연말결산 스티커 만들기</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css">
 <style>
-:root{--blue:#3a5485;--prov:#6f8dbf;--baby:#b6c6d3;--mon:#7d8588;--stucco:#a08e82;--peach:#ecba99;--corn:#f1dbb6;--ink:#26304a}
+:root{--bg:#F1F1F1;--pink:#FBC2C2;--blue:#BFD4F2;--yel:#F9ECBF;--ink:#4F4F4F}
 *{box-sizing:border-box}
-body{margin:0;font-family:-apple-system,"Pretendard","Noto Sans KR",sans-serif;background:#faf3e6;color:var(--ink);-webkit-user-select:none;user-select:none}
+body{margin:0;font-family:"Pretendard",-apple-system,"Noto Sans KR",sans-serif;background:var(--bg);color:var(--ink);-webkit-user-select:none;user-select:none}
 .wrap{max-width:560px;margin:0 auto;padding:18px 16px 28px}
-h1{font-size:24px;margin:6px 0 4px;color:var(--blue);letter-spacing:-.5px}
-.by{font-size:13px;color:var(--mon);margin:0 0 14px}
-.by a{color:var(--mon);text-decoration:underline;text-underline-offset:2px}
+h1{font-size:24px;margin:6px 0 4px;letter-spacing:-.5px}
+.by{font-size:12px;margin:0 0 14px}
+.by a{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
 .row{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0;align-items:center}
-button{font:inherit;font-size:14px;padding:8px 12px;border:1.5px solid var(--baby);background:#fff;border-radius:10px;cursor:pointer;color:var(--ink)}
-button.on{background:var(--blue);border-color:var(--blue);color:#fff}
-button.main{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:600}
-button.pk{background:var(--peach);border-color:var(--peach);color:#4a2f1d;font-weight:600}
+.lb{font-size:13px}
+button{font:inherit;font-size:14px;padding:8px 12px;border:1.5px solid var(--ink);background:var(--yel);border-radius:10px;cursor:pointer;color:var(--ink)}
+button.on{background:var(--pink)}
+button.main{background:var(--blue);font-weight:600}
+button.pk{background:var(--pink);font-weight:600}
+button.sw{width:30px;height:30px;padding:0;border-radius:50%}
+button.sw.on{outline:3px solid var(--ink);outline-offset:2px}
 button:disabled{opacity:.35}
-.stage{background:var(--baby);border-radius:14px;padding:10px;display:flex;justify-content:center}
-canvas{max-width:100%;max-height:62vh;touch-action:none;background:#fff;box-shadow:0 2px 10px #26304a33}
+.stage{border:1.5px solid var(--ink);border-radius:14px;padding:10px;display:flex;justify-content:center}
+canvas{max-width:100%;max-height:62vh;touch-action:none;background:var(--bg);border:1.5px solid var(--ink)}
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.grid button{padding:2px;background:#fff;aspect-ratio:5/4;display:flex;align-items:center;justify-content:center;border-color:var(--corn)}
+.grid button{padding:2px;background:var(--bg);aspect-ratio:5/4;display:flex;align-items:center;justify-content:center}
 .grid img{max-width:100%;max-height:100%;object-fit:contain;pointer-events:none}
 label{font-size:13px;display:flex;align-items:center;gap:8px;flex:1;min-width:140px}
-input[type=range]{flex:1;accent-color:var(--prov)}
-small{color:var(--mon);display:block;margin:6px 0}
-h2{font-size:13px;color:var(--stucco);margin:16px 0 4px;font-weight:600}
+input[type=range]{flex:1;accent-color:var(--ink)}
+#txt{flex:1;font:inherit;font-size:16px;padding:8px 10px;border:1.5px solid var(--ink);border-radius:10px;background:var(--bg);color:var(--ink);-webkit-user-select:text;user-select:text}
+#txt:disabled{opacity:.5}
+small{display:block;margin:6px 0}
+h2{font-size:13px;margin:16px 0 4px;font-weight:700}
 </style>
 </head>
 <body>
@@ -49,9 +55,8 @@ h2{font-size:13px;color:var(--stucco);margin:16px 0 4px;font-weight:600}
 <div class="row" id="fitrow">
   <button data-f="cover" class="on">사진 꽉 채우기</button>
   <button data-f="contain">전체 보이기</button>
-  <button data-b="#fff" class="on">흰 배경</button>
-  <button data-b="#000">검정 배경</button>
 </div>
+<div class="row"><span class="lb">빈 공간 색</span><span id="bgsw" style="display:flex;gap:8px"></span></div>
 
 <div class="stage"><canvas id="cv"></canvas></div>
 <small>라벨을 드래그하면 라벨이, 라벨 없는 곳을 드래그하면 사진이 움직여요 · 두 손가락으로 크기(라벨은 회전도) · PC는 마우스 휠</small>
@@ -70,6 +75,13 @@ h2{font-size:13px;color:var(--stucco);margin:16px 0 4px;font-weight:600}
 <h2>라벨 고르기 (탭하면 추가돼요)</h2>
 <div class="grid" id="grid"></div>
 
+<h2>글씨 (사진 위 글씨 · '무제' 라벨 빈 칸)</h2>
+<div class="row"><button id="addtxt" class="pk">＋ 사진에 글씨 추가</button></div>
+<div class="row"><input id="txt" type="text" disabled placeholder="글씨나 '무제' 라벨을 선택하면 여기서 입력해요"></div>
+<small>'무제' 라벨은 최대 4글자, 한 칸에 한 글자씩 들어가요. 띄어쓰기로 칸을 비울 수 있어요 (예: 첫 도전)</small>
+<div class="row" id="fonts"></div>
+<div class="row" id="cols" style="gap:8px"></div>
+
 <div class="row" style="margin-top:16px">
   <button class="main" id="save" style="flex:1;padding:14px">💾 이미지 저장</button>
 </div>
@@ -80,7 +92,7 @@ const LABELS=[["food","음식"],["song","노래"],["movie","영화"],["book","�
 const RS={"9:16":[1080,1920],"4:5":[1080,1350],"1:1":[1080,1080]};
 const $=s=>document.querySelector(s);
 const cv=$("#cv"),ctx=cv.getContext("2d");
-let photo=null,ratio="4:5",fit="cover",bg="#fff",layers=[],sel=null,ps=1,pox=0,poy=0;
+let photo=null,ratio="4:5",fit="cover",bg="#F1F1F1",layers=[],sel=null,ps=1,pox=0,poy=0;
 function resetPhoto(){ps=1;pox=0;poy=0;$("#psize").value=1}
 
 // 투명 여백 잘라내기
@@ -112,14 +124,14 @@ function draw(exp){
     const w=photo.width*k*ps,h=photo.height*k*ps;
     ctx.drawImage(photo,(W-w)/2+pox*W,(H-h)/2+poy*H,w,h);
   }else{
-    ctx.fillStyle=bg==="#fff"?"#aaa":"#777";ctx.font=W/18+"px sans-serif";ctx.textAlign="center";
+    ctx.fillStyle=bg==="#4F4F4F"?"#F1F1F1":"#4F4F4F";ctx.font=W/18+"px sans-serif";ctx.textAlign="center";
     ctx.fillText("사진을 골라주세요",W/2,H/2);
   }
   layers.forEach(L=>{
     const[w,h]=dims(L);
     ctx.save();ctx.translate(L.x*W,L.y*H);ctx.rotate(L.r*Math.PI/180);
     ctx.drawImage(L.c,-w/2,-h/2,w,h);
-    if(!exp&&L===sel){ctx.lineWidth=Math.max(6,W/150);ctx.strokeStyle="#fff";ctx.strokeRect(-w/2,-h/2,w,h);ctx.lineWidth=Math.max(3,W/300);ctx.strokeStyle="#3a5485";ctx.setLineDash([W/60,W/90]);ctx.strokeRect(-w/2,-h/2,w,h)}
+    if(!exp&&L===sel){ctx.lineWidth=Math.max(6,W/150);ctx.strokeStyle="#F1F1F1";ctx.strokeRect(-w/2,-h/2,w,h);ctx.lineWidth=Math.max(3,W/300);ctx.strokeStyle="#4F4F4F";ctx.setLineDash([W/60,W/90]);ctx.strokeRect(-w/2,-h/2,w,h)}
     ctx.restore();
   });
 }
@@ -127,6 +139,13 @@ function sync(){
   const on=!!sel;
   ["#size","#rot","#del"].forEach(s=>$(s).disabled=!on);
   if(sel){$("#size").value=sel.w;$("#rot").value=sel.r}
+  const tx=!!(sel&&sel.kind),t=$("#txt");
+  t.disabled=!tx;
+  document.querySelectorAll("#fonts button,#cols button").forEach(b=>b.disabled=!tx);
+  if(tx){t.maxLength=sel.kind==="blank"?4:20;if(t.value!==sel.text)t.value=sel.text;
+    document.querySelectorAll("#fonts button").forEach(b=>b.classList.toggle("on",b.dataset.id===sel.font));
+    document.querySelectorAll("#cols button").forEach(b=>b.classList.toggle("on",b.dataset.c===sel.color))}
+  else t.value="";
 }
 
 // 라벨 목록
@@ -136,7 +155,10 @@ LABELS.forEach(([id,name])=>{
     const c=crop(img);
     const b=document.createElement("button");b.title="올해의 "+name;
     const t=new Image();t.src=c.toDataURL();b.appendChild(t);
-    b.onclick=()=>{const L={c,x:.5,y:.5,w:.45,r:0};layers.push(L);sel=L;sync();draw()};
+    b.onclick=()=>{
+      const L={c,x:.5,y:.5,w:.45,r:0};
+      if(id==="untitled"){Object.assign(L,{kind:"blank",img,text:"",font:"min",color:"#4F4F4F"});layers.push(L);sel=L;sync();refresh(L);$("#txt").focus();return}
+      layers.push(L);sel=L;sync();draw()};
     $("#grid").appendChild(b);
   };
   img.src="labels/"+id+".png";
@@ -154,18 +176,75 @@ $("#file").onchange=e=>{
 // 옵션
 $("#ratios").onclick=e=>{const r=e.target.dataset.r;if(!r)return;ratio=r;resetPhoto();
   [...$("#ratios").children].forEach(b=>b.classList.toggle("on",b===e.target));draw()};
-$("#fitrow").onclick=e=>{const d=e.target.dataset;if(!d.f&&!d.b)return;
-  if(d.f)fit=d.f;if(d.b)bg=d.b;
-  [...$("#fitrow").children].forEach(b=>{
-    if(d.f&&b.dataset.f)b.classList.toggle("on",b===e.target);
-    if(d.b&&b.dataset.b)b.classList.toggle("on",b===e.target)});
-  draw()};
+$("#fitrow").onclick=e=>{const f=e.target.dataset.f;if(!f)return;fit=f;
+  [...$("#fitrow").children].forEach(b=>b.classList.toggle("on",b===e.target));draw()};
 $("#size").oninput=e=>{if(sel){sel.w=+e.target.value;draw()}};
 $("#rot").oninput=e=>{if(sel){sel.r=+e.target.value;draw()}};
 $("#del").onclick=()=>{layers=layers.filter(l=>l!==sel);sel=null;sync();draw()};
 
 $("#psize").oninput=e=>{ps=+e.target.value;draw()};
 $("#preset").onclick=()=>{resetPhoto();draw()};
+
+// 글씨 · 폰트 · 색
+const PAL=["#F1F1F1","#FBC2C2","#BFD4F2","#F9ECBF","#4F4F4F"];
+const FONTS=[{id:"pre",name:"Pretendard",css:"Pretendard",w:700},{id:"min",name:"윤 민국",css:"YoonMinGuk",w:400,files:["fonts/MinGuk.otf","fonts/MinGuk.ttf"]}];
+const fontOf=id=>FONTS.find(f=>f.id===id&&!f.off)||FONTS[0];
+async function loadFont(f,t){
+  if(f.face){f.p=f.p||f.face.load().then(()=>document.fonts.add(f.face));await f.p}
+  else await document.fonts.load(`${f.w} 100px "${f.css}"`,t||"가");
+}
+function renderText(t,f,col){
+  const S=200,c=document.createElement("canvas"),x=c.getContext("2d"),fn=`${f.w} ${S}px "${f.css}",sans-serif`;
+  x.font=fn;c.width=Math.ceil(x.measureText(t).width)+S;c.height=S*2;
+  x.font=fn;x.fillStyle=col;x.textAlign="center";x.textBaseline="middle";x.fillText(t,c.width/2,S);
+  return crop(c);
+}
+const CELLS=[136,221,299,377]; // '무제' 라벨 2번째 줄 칸 중심(x), y=213
+function renderBlank(L,f){
+  const k=2,c=document.createElement("canvas"),x=c.getContext("2d");
+  c.width=L.img.width*k;c.height=L.img.height*k;x.drawImage(L.img,0,0,c.width,c.height);
+  x.font=`${f.w} ${56*k}px "${f.css}",sans-serif`;x.fillStyle=L.color;x.textAlign="center";x.textBaseline="middle";
+  Array.from(L.text).slice(0,4).forEach((ch,i)=>{if(ch.trim())x.fillText(ch,CELLS[i]*k,215*k)});
+  return crop(c);
+}
+async function refresh(L){
+  const v=L.v=(L.v||0)+1,f=fontOf(L.font);
+  await loadFont(f,L.text||"가");
+  if(v!==L.v)return;
+  if(L.kind==="blank")L.c=renderBlank(L,f);
+  else{
+    if(!L.text)return;
+    const o=L.c.width/L.c.height,c=renderText(L.text,f,L.color),a=c.width/c.height;
+    if(L.fresh){L.w=Math.min(.9,Math.max(.15,.08*a));L.fresh=0}
+    else L.w=Math.min(1.2,Math.max(.08,L.w*a/o));
+    L.c=c;
+  }
+  if(L===sel)$("#size").value=L.w;
+  draw();
+}
+$("#addtxt").onclick=()=>{
+  const L={kind:"text",text:"올해의 한마디",font:"pre",color:"#4F4F4F",x:.5,y:.5,w:.2,r:0,fresh:1,c:document.createElement("canvas")};
+  L.c.width=L.c.height=1;layers.push(L);sel=L;sync();refresh(L).then(()=>$("#txt").focus());
+};
+$("#txt").oninput=e=>{if(sel&&sel.kind){sel.text=e.target.value;refresh(sel)}};
+function buildUI(){
+  FONTS.filter(f=>!f.off).forEach(f=>{
+    const b=document.createElement("button");b.textContent=f.name;b.dataset.id=f.id;
+    b.onclick=()=>{if(sel&&sel.kind){sel.font=f.id;sync();refresh(sel)}};$("#fonts").appendChild(b)});
+  const mk=(el,cb)=>PAL.forEach(c=>{const b=document.createElement("button");b.className="sw";b.style.background=c;b.dataset.c=c;b.title=c;b.onclick=()=>cb(c);el.appendChild(b)});
+  mk($("#cols"),c=>{if(sel&&sel.kind){sel.color=c;sync();refresh(sel)}});
+  mk($("#bgsw"),c=>{bg=c;[...$("#bgsw").children].forEach(b=>b.classList.toggle("on",b.dataset.c===c));draw()});
+  [...$("#bgsw").children].forEach(b=>b.classList.toggle("on",b.dataset.c===bg));
+  sync();
+}
+async function initFonts(){
+  for(const f of FONTS){
+    if(!f.files)continue;
+    for(const u of f.files){try{const r=await fetch(u,{method:"HEAD"});if(r.ok){f.face=new FontFace(f.css,`url("${u}")`);break}}catch(e){}}
+    if(!f.face)f.off=true;
+  }
+  buildUI();
+}
 
 // 포인터 (드래그 / 핀치)
 const P=new Map();let g=null;
@@ -237,6 +316,7 @@ $("#save").onclick=()=>{
   },"image/png");
 };
 
+initFonts();
 draw();
 </script>
 </body>
