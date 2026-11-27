@@ -194,7 +194,7 @@ $("#bgrow").onclick=e=>{const b=e.target.dataset.b;if(!b)return;bg=b;
 
 // 글씨 · 폰트 · 색
 const PAL=["#F1F1F1","#FBC2C2","#BFD4F2","#F9ECBF","#4F4F4F"];
-const FONTS=[{id:"pre",name:"Pretendard",css:"Pretendard",w:700},{id:"min",name:"윤 민국",css:"YoonMinGuk",w:400,files:["fonts/YoonChildfundkoreaMinGuk.otf","fonts/YoonChildfundkoreaMinGuk.ttf","fonts/YoonChildfundkoreaMinGuk.OTF","fonts/YoonChildfundkoreaMinGuk.TTF"]}];
+const FONTS=[{id:"pre",name:"Pretendard",css:"Pretendard",w:700},{id:"min",name:"Yoon 초록우산어린이 민국",css:"YoonMinGuk",w:400,files:["fonts/YoonChildfundkoreaMinGuk.otf","fonts/YoonChildfundkoreaMinGuk.ttf","fonts/YoonChildfundkoreaMinGuk.OTF","fonts/YoonChildfundkoreaMinGuk.TTF"]}];
 const fontOf=id=>FONTS.find(f=>f.id===id&&!f.off)||FONTS[0];
 async function loadFont(f,t){
   if(f.face){f.p=f.p||f.face.load().then(()=>document.fonts.add(f.face));await f.p}
